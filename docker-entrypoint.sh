@@ -1,10 +1,16 @@
 #!/bin/sh
-# Render / production: set GATEWAY_PROXY_* and UAM_FRONTEND_URL in the host dashboard.
+# Render: prefer GATEWAY_INTERNAL_HOST (private network). Public onrender.com URLs loop (508).
 # Local Compose: defaults below match the `gateway` service on port 8080.
 set -e
 
-export GATEWAY_PROXY_URL="${GATEWAY_PROXY_URL:-http://gateway:8080}"
-export GATEWAY_PROXY_HOST="${GATEWAY_PROXY_HOST:-gateway}"
+if [ -n "${GATEWAY_INTERNAL_HOST:-}" ]; then
+    port="${GATEWAY_INTERNAL_PORT:-8080}"
+    export GATEWAY_PROXY_URL="http://${GATEWAY_INTERNAL_HOST}:${port}"
+    export GATEWAY_PROXY_HOST="${GATEWAY_INTERNAL_HOST}"
+else
+    export GATEWAY_PROXY_URL="${GATEWAY_PROXY_URL:-http://gateway:8080}"
+    export GATEWAY_PROXY_HOST="${GATEWAY_PROXY_HOST:-gateway}"
+fi
 
 envsubst '${GATEWAY_PROXY_URL} ${GATEWAY_PROXY_HOST}' \
     < /etc/nginx/nginx.conf.template \

@@ -19,13 +19,16 @@ Console URL: http://localhost:8090 (default `FRONTEND_TEST_PORT`).
 
 ## Render
 
-Set in the **Render dashboard** (not in git):
+Set in the **Render dashboard** (not in git). Use gateway **internal** hostname
+(**gateway-edge → Connect → Internal**) to avoid `508 Loop Detected`.
 
 | Variable | Example |
 |----------|---------|
-| `GATEWAY_PROXY_URL` | `https://YOUR-GATEWAY.onrender.com` |
-| `GATEWAY_PROXY_HOST` | `YOUR-GATEWAY.onrender.com` |
+| `GATEWAY_INTERNAL_HOST` | `gateway-edge-xxxx` |
+| `GATEWAY_INTERNAL_PORT` | `8080` |
 | `UAM_FRONTEND_URL` | `https://YOUR-UAM-FRONTEND.onrender.com` |
+
+Do **not** proxy to `https://*.onrender.com` between Render web services.
 
 `nginx.conf.template` and `runtime-config.js` are rendered at container start via `docker-entrypoint.sh`.
 Local Compose keeps defaults (`http://gateway:8080`).
